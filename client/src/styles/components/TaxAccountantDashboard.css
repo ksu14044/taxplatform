@@ -1,0 +1,288 @@
+@layer components {
+  /* 세무사 대시보드 페이지 */
+  .tax-dashboard-page {
+    @apply min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative;
+  }
+
+  /* 배경 장식 */
+  .tax-dashboard-background-decoration {
+    @apply absolute inset-0 overflow-hidden pointer-events-none;
+  }
+
+  .tax-dashboard-decoration-blob {
+    @apply absolute rounded-full blur-3xl opacity-10;
+  }
+
+  .tax-dashboard-decoration-blob.top-20 {
+    @apply w-96 h-96 bg-blue-100 -top-24 -left-24;
+  }
+
+  .tax-dashboard-decoration-blob.bottom-20 {
+    @apply w-80 h-80 bg-indigo-100 -bottom-20 -right-20;
+  }
+
+  /* 헤더 */
+  .tax-dashboard-header {
+    @apply relative z-10 bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm;
+  }
+
+  .tax-dashboard-header-content {
+    @apply container mx-auto px-4 sm:px-6 py-5 flex items-center justify-between;
+  }
+
+  .tax-dashboard-logo {
+    @apply flex items-center gap-4;
+  }
+
+  .tax-dashboard-logo-text {
+    @apply text-xl sm:text-2xl font-bold text-slate-800;
+  }
+
+  .tax-dashboard-header-actions {
+    @apply flex items-center gap-3;
+  }
+
+  /* 알람 버튼 */
+  .tax-dashboard-notification-button {
+    @apply relative p-3 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all duration-300 focus:outline-none;
+  }
+
+  .tax-dashboard-notification-badge {
+    @apply absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center;
+  }
+
+  /* 로그아웃 버튼 */
+  .tax-dashboard-logout-button {
+    @apply flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-800 rounded-xl transition-all duration-300 font-semibold text-sm focus:outline-none border border-slate-200;
+  }
+
+  /* 메인 컨텐츠 */
+  .tax-dashboard-main {
+    @apply relative z-10 container mx-auto px-4 sm:px-6 py-8;
+  }
+
+  .tax-dashboard-container {
+    @apply max-w-5xl mx-auto space-y-6;
+  }
+
+  /* 환영 카드 */
+  .tax-dashboard-welcome-card {
+    @apply bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-lg flex items-center justify-between animate-fade-in hover:shadow-xl transition-shadow duration-300;
+  }
+
+  .tax-dashboard-welcome-title {
+    @apply text-2xl sm:text-3xl font-bold text-slate-800 mb-2;
+  }
+
+  .tax-dashboard-welcome-subtitle {
+    @apply text-sm sm:text-base text-slate-600 font-medium;
+  }
+
+  .tax-dashboard-user-avatar {
+    @apply w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg;
+  }
+
+  /* 섹션 */
+  .tax-dashboard-section {
+    @apply bg-white rounded-xl p-6 border border-slate-200 shadow-lg animate-slide-up hover:shadow-xl transition-shadow duration-300;
+  }
+
+  .tax-dashboard-section-title {
+    @apply text-xl font-bold text-slate-800 mb-4 flex items-center gap-3;
+  }
+
+  /* 빈 상태 */
+  .tax-dashboard-empty {
+    @apply flex flex-col items-center justify-center py-12 space-y-4 text-slate-500;
+  }
+
+  .tax-dashboard-empty svg {
+    @apply text-slate-400;
+  }
+
+  /* 로딩 상태 */
+  .tax-dashboard-loading {
+    @apply flex flex-col items-center justify-center py-12 space-y-4 text-slate-500;
+  }
+
+  /* 필터 탭 */
+  .tax-dashboard-filter-tabs {
+    @apply flex flex-wrap gap-2 mb-6;
+  }
+
+  .tax-dashboard-filter-tab {
+    @apply px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-semibold text-sm transition-all duration-300 hover:bg-slate-200 focus:outline-none border border-slate-200;
+  }
+
+  .tax-dashboard-filter-tab.active {
+    @apply bg-blue-500 text-white shadow-md border-blue-500;
+  }
+
+  /* 요청 리스트 */
+  .tax-dashboard-request-list {
+    @apply space-y-4;
+  }
+
+  /* 요청 카드 */
+  .tax-dashboard-request-card {
+    @apply bg-white rounded-xl p-5 border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all duration-300 space-y-4;
+  }
+
+  .tax-dashboard-request-content {
+    @apply space-y-3;
+  }
+
+  .tax-dashboard-request-header {
+    @apply flex items-center justify-between;
+  }
+
+  .tax-dashboard-request-badge {
+    @apply px-3 py-1 bg-yellow-500/20 text-yellow-300 text-xs font-bold rounded-full border border-yellow-500/30;
+  }
+
+  /* 상태 배지 */
+  .tax-dashboard-status-badge {
+    @apply px-3 py-1 text-xs font-bold rounded-full border;
+  }
+
+  .tax-dashboard-status-badge.status-requested {
+    @apply bg-amber-100 text-amber-800 border-amber-300;
+  }
+
+  .tax-dashboard-status-badge.status-sent {
+    @apply bg-blue-100 text-blue-800 border-blue-300;
+  }
+
+  .tax-dashboard-status-badge.status-completed {
+    @apply bg-green-100 text-green-800 border-green-300;
+  }
+
+  .tax-dashboard-request-time {
+    @apply text-xs text-slate-500;
+  }
+
+  /* 고객 정보 */
+  .tax-dashboard-client-info {
+    @apply space-y-2;
+  }
+
+  /* 유형 배지 */
+  .tax-dashboard-user-type-badge {
+    @apply px-2 py-1 text-xs font-bold rounded-md border;
+  }
+
+  .tax-dashboard-user-type-badge.type-corporate {
+    @apply bg-purple-100 text-purple-800 border-purple-300;
+  }
+
+  .tax-dashboard-user-type-badge.type-individual {
+    @apply bg-cyan-100 text-cyan-800 border-cyan-300;
+  }
+
+  .tax-dashboard-user-type-badge.type-non-business {
+    @apply bg-slate-100 text-slate-800 border-slate-300;
+  }
+
+  .tax-dashboard-request-message {
+    @apply text-slate-700 leading-relaxed;
+  }
+
+  .tax-dashboard-request-info {
+    @apply flex items-center gap-4 text-sm text-slate-500;
+  }
+
+  /* 요청 액션 */
+  .tax-dashboard-request-actions {
+    @apply flex flex-col sm:flex-row gap-3;
+  }
+
+  .tax-dashboard-hometax-button {
+    @apply flex-1 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2 focus:outline-none border border-blue-500;
+  }
+
+  .tax-dashboard-action-button {
+    @apply flex-1 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 focus:outline-none border border-green-500;
+  }
+
+  /* 정보 카드 */
+  .tax-dashboard-info-card {
+    @apply bg-blue-50 rounded-xl p-6 border border-blue-200 flex items-start gap-4 animate-slide-up;
+  }
+
+  .tax-dashboard-info-card h4 {
+    @apply text-slate-800 font-bold;
+  }
+
+  .tax-dashboard-info-card ol {
+    @apply text-slate-600;
+  }
+
+  /* 애니메이션 */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.5s ease-out;
+  }
+
+  /* 반응형 */
+  @media (max-width: 640px) {
+    .tax-dashboard-header-content {
+      @apply px-4 py-4;
+    }
+
+    .tax-dashboard-logo {
+      @apply gap-2;
+    }
+
+    .tax-dashboard-logo-text {
+      @apply text-lg;
+    }
+
+    .tax-dashboard-logout-button {
+      @apply px-3 py-2 text-xs;
+    }
+
+    .tax-dashboard-welcome-card {
+      @apply p-5 flex-col items-start gap-4;
+    }
+
+    .tax-dashboard-user-avatar {
+      @apply self-end w-14 h-14;
+    }
+
+    .tax-dashboard-section {
+      @apply p-5;
+    }
+
+    .tax-dashboard-request-card {
+      @apply p-4;
+    }
+
+    .tax-dashboard-main {
+      @apply px-4 py-6;
+    }
+  }
+}
+

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.taxplatform.mapper.UserMapper">
+    
+    <!-- 사용자 정보 저장 -->
+    <insert id="insertUser" parameterType="com.taxplatform.domain.User" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO users (
+            username, email, password, name,
+            resident_number, phone_number, postal_code, address, address_detail,
+            user_type, business_number, corporate_number,
+            role, payment_status, mandate_status,
+            created_at, updated_at
+        )
+        VALUES (
+            #{username}, #{email}, #{password}, #{name},
+            #{residentNumber}, #{phoneNumber}, #{postalCode}, #{address}, #{addressDetail},
+            #{userType}, #{businessNumber}, #{corporateNumber},
+            COALESCE(#{role}, 'CLIENT'), COALESCE(#{paymentStatus}, 'UNPAID'), COALESCE(#{mandateStatus}, 'NONE'),
+            NOW(), NOW()
+        )
+    </insert>
+    
+    <!-- 사용자명으로 사용자 조회 -->
+    <select id="findByUsername" parameterType="String" resultType="com.taxplatform.domain.User">
+        SELECT 
+            user_id as userId,
+            username,
+            email,
+            password,
+            name,
+            resident_number as residentNumber,
+            phone_number as phoneNumber,
+            postal_code as postalCode,
+            address,
+            address_detail as addressDetail,
+            user_type as userType,
+            business_number as businessNumber,
+            corporate_number as corporateNumber,
+            role,
+            payment_status as paymentStatus,
+            last_payment_date as lastPaymentDate,
+            mandate_status as mandateStatus,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM users
+        WHERE username = #{username}
+    </select>
+    
+    <!-- 이메일로 사용자 조회 -->
+    <select id="findByEmail" parameterType="String" resultType="com.taxplatform.domain.User">
+        SELECT 
+            user_id as userId,
+            username,
+            email,
+            password,
+            name,
+            resident_number as residentNumber,
+            phone_number as phoneNumber,
+            postal_code as postalCode,
+            address,
+            address_detail as addressDetail,
+            user_type as userType,
+            business_number as businessNumber,
+            corporate_number as corporateNumber,
+            role,
+            payment_status as paymentStatus,
+            last_payment_date as lastPaymentDate,
+            mandate_status as mandateStatus,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM users
+        WHERE email = #{email}
+    </select>
+    
+    <!-- 사용자명 또는 이메일로 사용자 조회 (로그인용) -->
+    <select id="findByUsernameOrEmail" parameterType="String" resultType="com.taxplatform.domain.User">
+        SELECT 
+            user_id as userId,
+            username,
+            email,
+            password,
+            name,
+            resident_number as residentNumber,
+            phone_number as phoneNumber,
+            postal_code as postalCode,
+            address,
+            address_detail as addressDetail,
+            user_type as userType,
+            business_number as businessNumber,
+            corporate_number as corporateNumber,
+            role,
+            payment_status as paymentStatus,
+            last_payment_date as lastPaymentDate,
+            mandate_status as mandateStatus,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM users
+        WHERE username = #{usernameOrEmail} OR email = #{usernameOrEmail}
+    </select>
+    
+    <!-- 사용자 ID로 사용자 조회 -->
+    <select id="findById" parameterType="Long" resultType="com.taxplatform.domain.User">
+        SELECT 
+            user_id as userId,
+            username,
+            email,
+            password,
+            name,
+            resident_number as residentNumber,
+            phone_number as phoneNumber,
+            postal_code as postalCode,
+            address,
+            address_detail as addressDetail,
+            user_type as userType,
+            business_number as businessNumber,
+            corporate_number as corporateNumber,
+            role,
+            payment_status as paymentStatus,
+            last_payment_date as lastPaymentDate,
+            mandate_status as mandateStatus,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM users
+        WHERE user_id = #{userId}
+    </select>
+    
+    <!-- 결제 상태 업데이트 -->
+    <update id="updatePaymentStatus" parameterType="com.taxplatform.domain.User">
+        UPDATE users
+        SET payment_status = #{paymentStatus},
+            last_payment_date = #{lastPaymentDate},
+            updated_at = NOW()
+        WHERE user_id = #{userId}
+    </update>
+    
+    <!-- 수임 동의 상태 업데이트 -->
+    <update id="updateMandateStatus" parameterType="com.taxplatform.domain.User">
+        UPDATE users
+        SET mandate_status = #{mandateStatus},
+            updated_at = NOW()
+        WHERE user_id = #{userId}
+    </update>
+    
+    <!-- 모든 세무사 목록 조회 -->
+    <select id="findAllTaxAccountants" resultType="com.taxplatform.domain.User">
+        SELECT 
+            user_id as userId,
+            username,
+            email,
+            name,
+            phone_number as phoneNumber,
+            role,
+            created_at as createdAt
+        FROM users
+        WHERE role = 'TAX_ACCOUNTANT'
+        ORDER BY created_at DESC
+    </select>
+    
+    <!-- 수임 동의 신청한 모든 회원 조회 -->
+    <select id="findAllMandateRequests" resultType="com.taxplatform.domain.User">
+        SELECT 
+            user_id as userId,
+            username,
+            email,
+            name,
+            resident_number as residentNumber,
+            phone_number as phoneNumber,
+            user_type as userType,
+            business_number as businessNumber,
+            corporate_number as corporateNumber,
+            role,
+            mandate_status as mandateStatus,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM users
+        WHERE mandate_status IN ('REQUESTED', 'SENT', 'COMPLETED')
+        AND role = 'CLIENT'
+        ORDER BY 
+            CASE mandate_status
+                WHEN 'REQUESTED' THEN 1
+                WHEN 'SENT' THEN 2
+                WHEN 'COMPLETED' THEN 3
+            END,
+            updated_at DESC
+    </select>
+    
+</mapper>

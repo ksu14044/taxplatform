@@ -1,0 +1,137 @@
+@layer components {
+  /* 알람 모달 오버레이 */
+  .notification-modal-overlay {
+    @apply fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in;
+  }
+
+  /* 알람 모달 컨텐츠 */
+  .notification-modal-content {
+    @apply bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 border border-slate-200 animate-slide-up max-h-[80vh] flex flex-col;
+  }
+
+  /* 알람 모달 헤더 */
+  .notification-modal-header {
+    @apply flex items-center justify-between p-6 border-b border-slate-200 flex-shrink-0;
+  }
+
+  .notification-modal-title {
+    @apply text-2xl font-bold text-slate-800;
+  }
+
+  .notification-modal-close {
+    @apply text-slate-400 hover:text-slate-600 transition-colors duration-200 focus:outline-none;
+  }
+
+  /* 알람 모달 바디 */
+  .notification-modal-body {
+    @apply p-6 overflow-y-auto flex-1;
+  }
+
+  /* 알람 로딩 */
+  .notification-loading {
+    @apply flex flex-col items-center justify-center py-12 space-y-4;
+  }
+
+  /* 알람 없음 */
+  .notification-empty {
+    @apply flex flex-col items-center justify-center py-12 space-y-4;
+  }
+
+  /* 알람 리스트 */
+  .notification-list {
+    @apply space-y-3;
+  }
+
+  /* 알람 아이템 */
+  .notification-item {
+    @apply bg-slate-50 rounded-xl p-4 border border-slate-200 hover:bg-slate-100 hover:shadow-md transition-all duration-300 cursor-pointer flex items-start justify-between gap-4;
+  }
+
+  .notification-item-unread {
+    @apply bg-blue-50 border-blue-300;
+  }
+
+  .notification-item-read {
+    @apply opacity-70;
+  }
+
+  .notification-item-content {
+    @apply flex-1 space-y-2;
+  }
+
+  .notification-item-header {
+    @apply flex items-center gap-2;
+  }
+
+  /* 읽지 않음 배지 */
+  .notification-unread-badge {
+    @apply w-2 h-2 bg-blue-400 rounded-full animate-pulse;
+  }
+
+  /* 알람 타입 배지 */
+  .notification-type-badge {
+    @apply px-2 py-1 rounded-md text-xs font-semibold border;
+  }
+
+  .notification-type-client {
+    @apply bg-green-100 text-green-800 border-green-300;
+  }
+
+  .notification-type-tax {
+    @apply bg-purple-100 text-purple-800 border-purple-300;
+  }
+
+  /* 수임 동의 배지 */
+  .notification-mandate-badge {
+    @apply px-2 py-1 rounded-md text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300 flex items-center gap-1;
+  }
+
+  /* 알람 메시지 */
+  .notification-message {
+    @apply text-slate-700 text-sm leading-relaxed;
+  }
+
+  /* 알람 시간 */
+  .notification-time {
+    @apply text-xs text-slate-500;
+  }
+
+  /* 읽음 버튼 */
+  .notification-read-button {
+    @apply px-3 py-1.5 bg-blue-500 text-white text-sm font-semibold rounded-lg hover:bg-blue-600 transition-all duration-300 border border-blue-500 flex-shrink-0;
+  }
+
+  /* 스크롤바 스타일 */
+  .notification-modal-body::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  .notification-modal-body::-webkit-scrollbar-track {
+    @apply bg-slate-100 rounded-full;
+  }
+
+  .notification-modal-body::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 rounded-full hover:bg-slate-400;
+  }
+
+  /* 반응형 */
+  @media (max-width: 640px) {
+    .notification-modal-content {
+      @apply mx-2 max-h-[90vh];
+    }
+
+    .notification-modal-header,
+    .notification-modal-body {
+      @apply p-4;
+    }
+
+    .notification-item {
+      @apply flex-col items-stretch;
+    }
+
+    .notification-read-button {
+      @apply w-full text-center;
+    }
+  }
+}
+

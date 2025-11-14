@@ -1,0 +1,218 @@
+@layer components {
+  /* 대시보드 페이지 */
+  .dashboard-page {
+    @apply min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative;
+  }
+
+  /* 배경 장식 */
+  .dashboard-background-decoration {
+    @apply absolute inset-0 overflow-hidden pointer-events-none;
+  }
+
+  .dashboard-decoration-blob {
+    @apply absolute rounded-full blur-3xl opacity-10;
+  }
+
+  .dashboard-decoration-blob.top-20 {
+    @apply w-96 h-96 bg-blue-100 -top-24 -left-24;
+  }
+
+  .dashboard-decoration-blob.bottom-20 {
+    @apply w-80 h-80 bg-indigo-100 -bottom-20 -right-20;
+  }
+
+  /* 헤더 */
+  .dashboard-header {
+    @apply relative z-10 bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm;
+  }
+
+  .dashboard-header-content {
+    @apply container mx-auto px-4 sm:px-6 py-5 flex items-center justify-between;
+  }
+
+  .dashboard-logo {
+    @apply flex items-center gap-4;
+  }
+
+  .dashboard-logo-text {
+    @apply text-xl sm:text-2xl font-bold text-slate-800;
+  }
+
+  .dashboard-header-actions {
+    @apply flex items-center gap-3;
+  }
+
+  /* 알람 버튼 */
+  .dashboard-notification-button {
+    @apply relative p-3 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all duration-300 focus:outline-none;
+  }
+
+  .dashboard-notification-badge {
+    @apply absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center;
+  }
+
+  /* 로그아웃 버튼 */
+  .dashboard-logout-button {
+    @apply flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-800 rounded-xl transition-all duration-300 font-semibold text-sm focus:outline-none border border-slate-200;
+  }
+
+  /* 메인 컨텐츠 */
+  .dashboard-main {
+    @apply relative z-10 container mx-auto px-4 sm:px-6 py-8;
+  }
+
+  .dashboard-container {
+    @apply max-w-4xl mx-auto space-y-6;
+  }
+
+  /* 환영 카드 */
+  .dashboard-welcome-card {
+    @apply bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-lg flex items-center justify-between animate-fade-in hover:shadow-xl transition-shadow duration-300;
+  }
+
+  .dashboard-welcome-title {
+    @apply text-2xl sm:text-3xl font-bold text-slate-800 mb-2;
+  }
+
+  .dashboard-welcome-subtitle {
+    @apply text-sm sm:text-base text-slate-600 font-medium;
+  }
+
+  .dashboard-user-avatar {
+    @apply w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg;
+  }
+
+  /* 정보 카드 */
+  .dashboard-info-card {
+    @apply bg-white rounded-xl p-6 border border-slate-200 shadow-lg animate-slide-up hover:shadow-xl transition-shadow duration-300;
+  }
+
+  .dashboard-info-header {
+    @apply flex items-center gap-3 mb-3;
+  }
+
+  .dashboard-info-title {
+    @apply text-lg font-bold text-slate-800;
+  }
+
+  .dashboard-info-content {
+    @apply text-slate-700;
+  }
+
+  /* 액션 섹션 */
+  .dashboard-action-section {
+    @apply animate-slide-up;
+  }
+
+  /* 액션 버튼 */
+  .dashboard-action-button {
+    @apply w-full py-4 sm:py-5 rounded-xl font-bold text-lg sm:text-xl shadow-md transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 focus:outline-none border;
+  }
+
+  .dashboard-action-button-payment {
+    @apply bg-green-500 hover:bg-green-600 text-white border-green-500;
+  }
+
+  .dashboard-action-button-mandate {
+    @apply bg-blue-500 hover:bg-blue-600 text-white border-blue-500;
+  }
+
+  /* 상태 카드 */
+  .dashboard-status-card {
+    @apply bg-white rounded-xl p-6 border border-slate-200 shadow-lg flex items-center gap-4 hover:shadow-xl transition-shadow duration-300;
+  }
+
+  .dashboard-status-requested {
+    @apply border-amber-300 bg-amber-50;
+  }
+
+  .dashboard-status-sent {
+    @apply border-blue-300 bg-blue-50;
+  }
+
+  .dashboard-status-completed {
+    @apply border-green-300 bg-green-50;
+  }
+
+  /* 수임 동의 섹션 */
+  .dashboard-mandate-section {
+    @apply space-y-4;
+  }
+
+  .dashboard-mandate-actions {
+    @apply flex flex-col sm:flex-row gap-3;
+  }
+
+  .dashboard-hometax-button {
+    @apply flex-1 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2 focus:outline-none border border-blue-500;
+  }
+
+  .dashboard-complete-button {
+    @apply flex-1 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 focus:outline-none border border-green-500;
+  }
+
+  .dashboard-info-box {
+    @apply bg-blue-50 rounded-lg p-4 border border-blue-200 flex items-start gap-3;
+  }
+
+  /* 애니메이션 */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.5s ease-out;
+  }
+
+  /* 반응형 */
+  @media (max-width: 640px) {
+    .dashboard-header-content {
+      @apply px-3 py-3;
+    }
+
+    .dashboard-logo-text {
+      @apply text-lg;
+    }
+
+    .dashboard-logout-button {
+      @apply px-3 py-2 text-xs;
+    }
+
+    .dashboard-logout-button span {
+      @apply hidden;
+    }
+
+    .dashboard-welcome-card {
+      @apply p-4 flex-col items-start gap-4;
+    }
+
+    .dashboard-user-avatar {
+      @apply self-end;
+    }
+
+    .dashboard-action-button {
+      @apply py-4 text-base;
+    }
+  }
+}
+

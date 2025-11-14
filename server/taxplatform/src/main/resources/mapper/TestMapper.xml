@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.taxplatform.mapper.TestMapper">
+    
+    <!-- test 테이블에 test_count 저장 -->
+    <insert id="insertTest" parameterType="com.taxplatform.domain.Test" useGeneratedKeys="true" keyProperty="testId">
+        INSERT INTO test (test_count)
+        VALUES (#{testCount})
+    </insert>
+    
+</mapper>
+
