@@ -155,7 +155,7 @@ export const verifyPhoneCodeApi = async (phoneNumber, code) => {
   })
 
   const result = await response.json()
-  
+
   if (result.code !== 'SUCCESS') {
     throw new Error(result.message || '인증번호 확인에 실패했습니다.')
   }
@@ -163,6 +163,54 @@ export const verifyPhoneCodeApi = async (phoneNumber, code) => {
   return {
     success: true,
     message: result.message
+  }
+}
+
+/**
+ * 사용자 정보 수정 API
+ */
+export const updateUserProfileApi = async (userId, updateData) => {
+  const response = await fetch(`${API_BASE_URL}/profile/${userId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updateData)
+  })
+
+  const result = await response.json()
+
+  if (result.code !== 'SUCCESS') {
+    throw new Error(result.message || '정보 수정에 실패했습니다.')
+  }
+
+  return {
+    success: true,
+    message: result.message,
+    user: result.data
+  }
+}
+
+/**
+ * 사용자 정보 조회 API
+ */
+export const getUserProfileApi = async (userId) => {
+  const response = await fetch(`${API_BASE_URL}/profile/${userId}`)
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
+
+  const result = await response.json()
+
+  if (result.code !== 'SUCCESS') {
+    throw new Error(result.message || '사용자 정보 조회에 실패했습니다.')
+  }
+
+  return {
+    success: true,
+    message: result.message,
+    user: result.data
   }
 }
 

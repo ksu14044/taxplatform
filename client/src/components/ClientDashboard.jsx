@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { checkPaymentStatusApi } from '../api/paymentApi'
 import { requestMandateApi, completeMandateApi } from '../api/mandateApi'
@@ -7,6 +8,7 @@ import PaymentModal from './PaymentModal'
 import NotificationModal from './NotificationModal'
 
 function ClientDashboard({ user, onLogout }) {
+  const navigate = useNavigate()
   const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [showNotificationModal, setShowNotificationModal] = useState(false)
   const queryClient = useQueryClient()
@@ -22,6 +24,13 @@ function ClientDashboard({ user, onLogout }) {
   const { data: unreadCountData } = useQuery({
     queryKey: ['unreadCount', user.userId],
     queryFn: () => getUnreadCountApi(user.userId),
+    refetchInterval: 10000 // 10초마다 자동 갱신
+  })
+
+  // 수임 해제 요청 알림 조회
+  const { data: notificationsData } = useQuery({
+    queryKey: ['notifications', user.userId],
+    queryFn: () => getNotificationsApi(user.userId),
     refetchInterval: 10000 // 10초마다 자동 갱신
   })
 
@@ -58,6 +67,12 @@ function ClientDashboard({ user, onLogout }) {
   const paymentStatus = paymentStatusData?.data
   const unreadCount = unreadCountData?.data || 0
   const isPaymentValid = paymentStatus?.valid || false
+  const notifications = notificationsData?.data || []
+
+  // 수임 해제 요청 알림 확인
+  const releaseRequestNotification = notifications.find(
+    notification => notification.message.includes('수임 해제') && !notification.isRead
+  )
 
   const handlePaymentSuccess = () => {
     refetchPaymentStatus()
@@ -85,6 +100,7 @@ function ClientDashboard({ user, onLogout }) {
 
   // 상태에 따른 버튼 렌더링
   const renderActionButton = () => {
+
     if (!isPaymentValid) {
       return (
         <button
@@ -239,6 +255,16 @@ function ClientDashboard({ user, onLogout }) {
               )}
             </button>
 
+            <button
+              className="dashboard-profile-button"
+              onClick={() => navigate('/profile')}
+              title="프로필 설정"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </button>
+
             <button className="dashboard-logout-button" onClick={onLogout}>
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -277,6 +303,54 @@ function ClientDashboard({ user, onLogout }) {
               <p className="dashboard-info-content">
                 결제 완료 (남은 기간: {paymentStatus?.daysRemaining}일)
               </p>
+            </div>
+          )}
+
+          {/* 수임 해제 요청 알림 */}
+          {releaseRequestNotification && (
+            <div className="dashboard-notification-section">
+              <div className="dashboard-status-card dashboard-status-warning">
+                <svg className="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+                <div>
+                  <h3 className="text-lg font-bold text-orange-300">수임 해제 요청</h3>
+                  <p className="text-sm text-gray-400">세무사가 기존 세무사와의 수임 관계 해제를 요청했습니다</p>
+                </div>
+              </div>
+              <div className="dashboard-mandate-actions">
+                <button
+                  className="dashboard-hometax-button"
+                  onClick={handleOpenHometax}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  홈택스로 이동하여 수임 해제
+                </button>
+                <button
+                  className="dashboard-info-button"
+                  onClick={() => alert('수임 해제를 완료하셨다면 다시 로그인하여 수임 동의 신청을 진행해주세요.')}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  안내사항
+                </button>
+              </div>
+              <div className="dashboard-info-box">
+                <svg className="w-5 h-5 text-orange-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+                <div className="text-sm text-gray-400">
+                  <p className="font-semibold text-gray-300 mb-1">수임 해제 후 절차</p>
+                  <ol className="list-decimal list-inside space-y-1">
+                    <li>"홈택스로 이동하여 수임 해제" 버튼을 클릭하여 홈택스에서 기존 세무사와의 수임 관계를 해제합니다</li>
+                    <li>수임 해제를 완료한 후 다시 이 플랫폼으로 돌아옵니다</li>
+                    <li>플랫폼에서 수임 동의 신청을 진행합니다</li>
+                  </ol>
+                </div>
+              </div>
             </div>
           )}
 

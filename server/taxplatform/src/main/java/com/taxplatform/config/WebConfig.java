@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -31,6 +32,16 @@ public class WebConfig {
                         .allowedMethods(allowedMethods.split(","))
                         .allowedHeaders(allowedHeaders.split(","))
                         .allowCredentials(allowCredentials);
+            }
+
+            @Override
+            public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                // 정적 리소스 경로 제한 - 필요한 경우에만 활성화
+                registry.addResourceHandler("/css/**", "/js/**", "/images/**", "/assets/**")
+                        .addResourceLocations("classpath:/static/css/",
+                                            "classpath:/static/js/",
+                                            "classpath:/static/images/",
+                                            "classpath:/static/assets/");
             }
         };
     }

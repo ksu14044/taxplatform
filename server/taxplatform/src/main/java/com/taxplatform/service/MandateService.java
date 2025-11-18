@@ -56,19 +56,19 @@ public class MandateService {
     public String sendMandateRequest(Long taxAccountantId, Long clientId) {
         User taxAccountant = userMapper.findById(taxAccountantId);
         User client = userMapper.findById(clientId);
-        
+
         if (taxAccountant == null || client == null) {
             throw new RuntimeException("사용자를 찾을 수 없습니다.");
         }
-        
+
         if (!"TAX_ACCOUNTANT".equals(taxAccountant.getRole())) {
             throw new RuntimeException("세무사만 수임 동의 요청을 보낼 수 있습니다.");
         }
-        
+
         // 수임 동의 상태 업데이트
         client.setMandateStatus("SENT");
         int result = userMapper.updateMandateStatus(client);
-        
+
         if (result > 0) {
             // 회원에게 알람 전송
             String message = "세무사가 수임 동의 요청을 보냈습니다. 홈택스에서 수임 동의 요청을 수락해주세요.";
@@ -76,6 +76,39 @@ public class MandateService {
             return "수임 동의 요청이 전송되었습니다.";
         } else {
             throw new RuntimeException("수임 동의 요청 전송에 실패했습니다.");
+        }
+    }
+
+    /**
+     * 세무사가 회원에게 수임 해제 요청 전송
+     * @param taxAccountantId 세무사 사용자 ID
+     * @param clientId 회원 사용자 ID
+     * @return 처리 결과 메시지
+     */
+    public String sendMandateReleaseRequest(Long taxAccountantId, Long clientId) {
+        User taxAccountant = userMapper.findById(taxAccountantId);
+        User client = userMapper.findById(clientId);
+
+        if (taxAccountant == null || client == null) {
+            throw new RuntimeException("사용자를 찾을 수 없습니다.");
+        }
+
+        if (!"TAX_ACCOUNTANT".equals(taxAccountant.getRole())) {
+            throw new RuntimeException("세무사만 수임 해제 요청을 보낼 수 있습니다.");
+        }
+
+        // 수임 동의 상태를 NONE으로 리셋
+        client.setMandateStatus("NONE");
+        int result = userMapper.updateMandateStatus(client);
+
+        if (result > 0) {
+            // 회원에게 수임 해제 요청 알람 전송
+            String message = "세무사가 기존 세무사와의 수임 관계 해제를 요청했습니다. 홈택스에서 기존 세무사와의 수임 관계를 해제한 후 다시 수임 동의 신청을 진행해주세요.";
+            notificationService.createNotification(clientId, taxAccountantId, "TAX_TO_CLIENT", message);
+
+            return "수임 해제 요청이 전송되었습니다.";
+        } else {
+            throw new RuntimeException("수임 해제 요청 처리에 실패했습니다.");
         }
     }
     

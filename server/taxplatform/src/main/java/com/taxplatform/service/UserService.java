@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 /**
  * User 관련 비즈니스 로직을 처리하는 Service 클래스
@@ -172,6 +173,160 @@ public class UserService {
             log.error(">>> 비밀번호 해싱 실패", e);
             throw new RuntimeException("비밀번호 해싱 중 오류가 발생했습니다.", e);
         }
+    }
+
+    /**
+     * 사용자 프로필 정보 조회
+     * @param userId 사용자 ID
+     * @return User 객체 (비밀번호 제외)
+     * @throws IllegalArgumentException 사용자를 찾을 수 없는 경우
+     */
+    public User getProfile(Long userId) {
+        User user = userMapper.findById(userId);
+
+        if (user == null) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+
+        // 비밀번호 제거 후 반환
+        user.setPassword(null);
+        log.info(">>> 프로필 조회 성공: userId={}", userId);
+        return user;
+    }
+
+    /**
+     * 사용자 프로필 정보 수정
+     * @param userId 사용자 ID
+     * @param updateData 수정할 데이터 (name, email, phoneNumber, postalCode, address, addressDetail)
+     * @return 수정된 User 객체
+     * @throws IllegalArgumentException 입력 검증 실패 또는 사용자를 찾을 수 없는 경우
+     */
+    @Transactional
+    public User updateProfile(Long userId, Map<String, String> updateData) {
+        // 사용자 존재 확인
+        User existingUser = userMapper.findById(userId);
+        if (existingUser == null) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+
+        // 입력 검증
+        validateProfileUpdate(updateData);
+
+        // 이메일 중복 체크 (변경하는 경우에만)
+        String newEmail = updateData.get("email");
+        if (newEmail != null && !newEmail.equals(existingUser.getEmail())) {
+            User userWithEmail = userMapper.findByEmail(newEmail);
+            if (userWithEmail != null && !userWithEmail.getUserId().equals(userId)) {
+                throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+            }
+        }
+
+        // User 객체 생성 및 업데이트
+        User updateUser = new User();
+        updateUser.setUserId(userId);
+        updateUser.setName(updateData.get("name"));
+        updateUser.setEmail(updateData.get("email"));
+        updateUser.setPhoneNumber(updateData.get("phoneNumber"));
+        updateUser.setPostalCode(updateData.get("postalCode"));
+        updateUser.setAddress(updateData.get("address"));
+        updateUser.setAddressDetail(updateData.get("addressDetail"));
+
+        int updatedRows = userMapper.updateProfile(updateUser);
+        if (updatedRows == 0) {
+            throw new IllegalArgumentException("프로필 업데이트에 실패했습니다.");
+        }
+
+        // 업데이트된 사용자 정보 조회
+        User updatedUser = userMapper.findById(userId);
+        updatedUser.setPassword(null); // 비밀번호 제거
+
+        log.info(">>> 프로필 업데이트 성공: userId={}, updatedFields={}", userId, updateData.keySet());
+        return updatedUser;
+    }
+
+    /**
+     * 프로필 업데이트를 위한 입력 검증
+     * @param updateData 검증할 데이터
+     * @throws IllegalArgumentException 검증 실패 시
+     */
+    private void validateProfileUpdate(Map<String, String> updateData) {
+        // 이름 검증
+        String name = updateData.get("name");
+        if (name != null && (name.trim().isEmpty() || name.length() > 50)) {
+            throw new IllegalArgumentException("이름은 1자 이상 50자 이하로 입력해주세요.");
+        }
+
+        // 이메일 검증
+        String email = updateData.get("email");
+        if (email != null && (!email.contains("@") || email.length() > 100)) {
+            throw new IllegalArgumentException("올바른 이메일 형식을 입력해주세요.");
+        }
+
+        // 휴대폰 번호 검증
+        String phoneNumber = updateData.get("phoneNumber");
+        if (phoneNumber != null && (phoneNumber.trim().isEmpty() || phoneNumber.length() > 20)) {
+            throw new IllegalArgumentException("올바른 휴대폰 번호를 입력해주세요.");
+        }
+
+        // 우편번호 검증
+        String postalCode = updateData.get("postalCode");
+        if (postalCode != null && postalCode.length() > 10) {
+            throw new IllegalArgumentException("올바른 우편번호를 입력해주세요.");
+        }
+
+        // 주소 검증
+        String address = updateData.get("address");
+        if (address != null && address.length() > 200) {
+            throw new IllegalArgumentException("주소는 200자 이하로 입력해주세요.");
+        }
+
+        // 상세 주소 검증
+        String addressDetail = updateData.get("addressDetail");
+        if (addressDetail != null && addressDetail.length() > 100) {
+            throw new IllegalArgumentException("상세 주소는 100자 이하로 입력해주세요.");
+        }
+    }
+
+    /**
+     * 사용자 비밀번호 변경
+     * @param userId 사용자 ID
+     * @param currentPassword 현재 비밀번호
+     * @param newPassword 새 비밀번호
+     * @throws IllegalArgumentException 입력 검증 실패 또는 사용자를 찾을 수 없는 경우
+     */
+    @Transactional
+    public void updatePassword(Long userId, String currentPassword, String newPassword) {
+        // 입력 검증
+        if (currentPassword == null || currentPassword.trim().isEmpty()) {
+            throw new IllegalArgumentException("현재 비밀번호를 입력해주세요.");
+        }
+
+        if (newPassword == null || newPassword.length() < 4) {
+            throw new IllegalArgumentException("새 비밀번호는 최소 4자 이상이어야 합니다.");
+        }
+
+        // 사용자 존재 확인
+        User user = userMapper.findById(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+
+        // 현재 비밀번호 확인
+        String hashedCurrentPassword = hashPassword(currentPassword);
+        if (!user.getPassword().equals(hashedCurrentPassword)) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        // 새 비밀번호 해싱 및 업데이트
+        String hashedNewPassword = hashPassword(newPassword);
+        user.setPassword(hashedNewPassword);
+
+        int updatedRows = userMapper.updateProfile(user);
+        if (updatedRows == 0) {
+            throw new IllegalArgumentException("비밀번호 변경에 실패했습니다.");
+        }
+
+        log.info(">>> 비밀번호 변경 성공: userId={}", userId);
     }
 }
 

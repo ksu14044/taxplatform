@@ -46,9 +46,38 @@ export const sendMandateRequestApi = async (taxAccountantId, clientId) => {
   }
 
   const result = await response.json()
-  
+
   if (result.code !== 'SUCCESS') {
     throw new Error(result.message || '수임 동의 요청 전송에 실패했습니다.')
+  }
+
+  return {
+    success: true,
+    message: result.message,
+    data: result.data
+  }
+}
+
+/**
+ * 수임 해제 요청 전송 API (세무사 → 회원)
+ */
+export const sendMandateReleaseRequestApi = async (taxAccountantId, clientId) => {
+  const response = await fetch(`${API_BASE_URL}/send-release-request`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ taxAccountantId, clientId })
+  })
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
+
+  const result = await response.json()
+
+  if (result.code !== 'SUCCESS') {
+    throw new Error(result.message || '수임 해제 요청 전송에 실패했습니다.')
   }
 
   return {

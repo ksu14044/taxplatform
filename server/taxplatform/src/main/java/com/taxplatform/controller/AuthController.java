@@ -191,5 +191,88 @@ public class AuthController {
             return ResponseEntity.badRequest().body(ApiResponse.error("VERIFICATION_FAILED", (String) result.get("message")));
         }
     }
+
+    /**
+     * 사용자 프로필 정보 조회 API
+     * @param userId 사용자 ID (PathVariable)
+     * @return 공통 응답 형식
+     */
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getProfile(@PathVariable Long userId) {
+        // 비즈니스 로직은 Service에 위임
+        User user = userService.getProfile(userId);
+
+        // 응답 데이터 구성
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("userId", user.getUserId());
+        userData.put("username", user.getUsername());
+        userData.put("email", user.getEmail());
+        userData.put("name", user.getName());
+        userData.put("phoneNumber", user.getPhoneNumber());
+        userData.put("postalCode", user.getPostalCode());
+        userData.put("address", user.getAddress());
+        userData.put("addressDetail", user.getAddressDetail());
+        userData.put("userType", user.getUserType());
+        userData.put("businessNumber", user.getBusinessNumber());
+        userData.put("corporateNumber", user.getCorporateNumber());
+        userData.put("role", user.getRole());
+
+        log.info(">>> 프로필 조회 성공: userId={}", userId);
+        return ResponseEntity.ok(ApiResponse.success("프로필 조회 성공", userData));
+    }
+
+    /**
+     * 사용자 프로필 정보 수정 API
+     * @param userId 사용자 ID (PathVariable)
+     * @param request 수정할 프로필 데이터
+     * @return 공통 응답 형식
+     */
+    @PutMapping("/profile/{userId}")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> updateProfile(
+            @PathVariable Long userId,
+            @RequestBody Map<String, String> request) {
+
+        // 비즈니스 로직은 Service에 위임
+        User updatedUser = userService.updateProfile(userId, request);
+
+        // 응답 데이터 구성
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("userId", updatedUser.getUserId());
+        userData.put("username", updatedUser.getUsername());
+        userData.put("email", updatedUser.getEmail());
+        userData.put("name", updatedUser.getName());
+        userData.put("phoneNumber", updatedUser.getPhoneNumber());
+        userData.put("postalCode", updatedUser.getPostalCode());
+        userData.put("address", updatedUser.getAddress());
+        userData.put("addressDetail", updatedUser.getAddressDetail());
+        userData.put("userType", updatedUser.getUserType());
+        userData.put("businessNumber", updatedUser.getBusinessNumber());
+        userData.put("corporateNumber", updatedUser.getCorporateNumber());
+        userData.put("role", updatedUser.getRole());
+
+        log.info(">>> 프로필 수정 성공: userId={}", userId);
+        return ResponseEntity.ok(ApiResponse.success("프로필 수정 성공", userData));
+    }
+
+    /**
+     * 사용자 비밀번호 변경 API
+     * @param userId 사용자 ID (PathVariable)
+     * @param request 현재 비밀번호와 새 비밀번호
+     * @return 공통 응답 형식
+     */
+    @PutMapping("/profile/{userId}/password")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> updatePassword(
+            @PathVariable Long userId,
+            @RequestBody Map<String, String> request) {
+
+        String currentPassword = request.get("currentPassword");
+        String newPassword = request.get("newPassword");
+
+        // 비즈니스 로직은 Service에 위임
+        userService.updatePassword(userId, currentPassword, newPassword);
+
+        log.info(">>> 비밀번호 변경 성공: userId={}", userId);
+        return ResponseEntity.ok(ApiResponse.success("비밀번호가 성공적으로 변경되었습니다.", null));
+    }
 }
 

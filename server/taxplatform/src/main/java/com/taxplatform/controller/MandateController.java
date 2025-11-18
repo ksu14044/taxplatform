@@ -45,6 +45,21 @@ public class MandateController {
             return ApiResponse.error("MANDATE_SEND_FAILED", e.getMessage());
         }
     }
+
+    /**
+     * 수임 해제 요청 전송 (세무사 → 회원)
+     * @param request taxAccountantId와 clientId를 포함한 요청 객체
+     * @return 처리 결과
+     */
+    @PostMapping("/send-release-request")
+    public ApiResponse<String> sendMandateReleaseRequest(@RequestBody SendMandateReleaseRequest request) {
+        try {
+            String message = mandateService.sendMandateReleaseRequest(request.getTaxAccountantId(), request.getClientId());
+            return ApiResponse.success(message, message);
+        } catch (Exception e) {
+            return ApiResponse.error("MANDATE_RELEASE_SEND_FAILED", e.getMessage());
+        }
+    }
     
     /**
      * 수임 동의 수락 완료 (회원)
@@ -95,19 +110,43 @@ public class MandateController {
     public static class SendMandateRequest {
         private Long taxAccountantId;
         private Long clientId;
-        
+
         public Long getTaxAccountantId() {
             return taxAccountantId;
         }
-        
+
         public void setTaxAccountantId(Long taxAccountantId) {
             this.taxAccountantId = taxAccountantId;
         }
-        
+
         public Long getClientId() {
             return clientId;
         }
-        
+
+        public void setClientId(Long clientId) {
+            this.clientId = clientId;
+        }
+    }
+
+    /**
+     * 수임 해제 요청 전송 DTO
+     */
+    public static class SendMandateReleaseRequest {
+        private Long taxAccountantId;
+        private Long clientId;
+
+        public Long getTaxAccountantId() {
+            return taxAccountantId;
+        }
+
+        public void setTaxAccountantId(Long taxAccountantId) {
+            this.taxAccountantId = taxAccountantId;
+        }
+
+        public Long getClientId() {
+            return clientId;
+        }
+
         public void setClientId(Long clientId) {
             this.clientId = clientId;
         }

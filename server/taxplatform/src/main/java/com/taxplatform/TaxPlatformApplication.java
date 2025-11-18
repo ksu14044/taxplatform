@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @RestController   // ← 메인 클래스도 컨트롤러로 만든다
-public class TaxPlatfromApplication {
+public class TaxPlatformApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(TaxPlatfromApplication.class, args);
+        SpringApplication.run(TaxPlatformApplication.class, args);
     }
 
     @GetMapping("/hello")

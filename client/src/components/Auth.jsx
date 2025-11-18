@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { 
-  loginApi, 
-  registerApi, 
-  verifyBusinessNumberApi, 
-  verifyCorporateNumberApi,
+import {
+  loginApi,
+  registerApi,
+  verifyBusinessNumberApi,
   sendPhoneVerificationApi,
-  verifyPhoneCodeApi 
+  verifyPhoneCodeApi
 } from '../api/authApi'
 
 function Auth({ onLoginSuccess }) {
@@ -33,14 +32,12 @@ function Auth({ onLoginSuccess }) {
     address: '',
     addressDetail: '',
     userType: 'NON_BUSINESS',  // 기본값: 비사업자
-    businessNumber: '',
-    corporateNumber: ''
+    businessNumber: ''
   })
 
   // 검증 상태
   const [verificationStatus, setVerificationStatus] = useState({
     businessNumber: false,
-    corporateNumber: false,
     phoneNumber: false
   })
 
@@ -91,12 +88,10 @@ function Auth({ onLoginSuccess }) {
           address: '',
           addressDetail: '',
           userType: 'NON_BUSINESS',
-          businessNumber: '',
-          corporateNumber: ''
+          businessNumber: ''
         })
         setVerificationStatus({
           businessNumber: false,
-          corporateNumber: false,
           phoneNumber: false
         })
         setPhoneVerification({
@@ -159,17 +154,6 @@ function Auth({ onLoginSuccess }) {
       return
     }
 
-    if (registerForm.userType === 'CORPORATE') {
-      if (!verificationStatus.businessNumber) {
-        alert('사업자등록번호를 확인해주세요.')
-        return
-      }
-      if (!verificationStatus.corporateNumber) {
-        alert('법인등록번호를 확인해주세요.')
-        return
-      }
-    }
-
     // 주민등록번호 합치기
     const residentNumber = `${registerForm.residentNumberFront}-${registerForm.residentNumberBack}`
 
@@ -184,8 +168,7 @@ function Auth({ onLoginSuccess }) {
       address: registerForm.address,
       addressDetail: registerForm.addressDetail,
       userType: registerForm.userType,
-      businessNumber: registerForm.businessNumber || null,
-      corporateNumber: registerForm.corporateNumber || null
+      businessNumber: registerForm.businessNumber || null
     })
   }
 
@@ -206,22 +189,6 @@ function Auth({ onLoginSuccess }) {
     }
   }
 
-  // 법인등록번호 검증
-  const handleVerifyCorporateNumber = async () => {
-    if (!registerForm.corporateNumber) {
-      alert('법인등록번호를 입력해주세요.')
-      return
-    }
-
-    try {
-      const result = await verifyCorporateNumberApi(registerForm.corporateNumber)
-      setVerificationStatus(prev => ({ ...prev, corporateNumber: true }))
-      alert(result.message)
-    } catch (error) {
-      setVerificationStatus(prev => ({ ...prev, corporateNumber: false }))
-      alert(error.message)
-    }
-  }
 
   // 휴대폰 인증번호 전송
   const handleSendVerificationCode = async () => {
@@ -274,12 +241,6 @@ function Auth({ onLoginSuccess }) {
     return `${numbers.slice(0, 3)}-${numbers.slice(3, 5)}-${numbers.slice(5, 10)}`
   }
 
-  // 하이픈 자동 삽입 (법인등록번호)
-  const formatCorporateNumber = (value) => {
-    const numbers = value.replace(/[^\d]/g, '')
-    if (numbers.length <= 6) return numbers
-    return `${numbers.slice(0, 6)}-${numbers.slice(6, 13)}`
-  }
 
   // 하이픈 자동 삽입 (휴대폰번호)
   const formatPhoneNumber = (value) => {
@@ -709,27 +670,6 @@ function Auth({ onLoginSuccess }) {
                         </label>
                       </div>
 
-                      <div className="auth-radio-option">
-                        <input
-                          type="radio"
-                          id="corporate"
-                          name="userType"
-                          value="CORPORATE"
-                          className="auth-radio-input"
-                          checked={registerForm.userType === 'CORPORATE'}
-                          onChange={(e) => {
-                            setRegisterForm({ ...registerForm, userType: e.target.value })
-                            setVerificationStatus({ businessNumber: false, corporateNumber: false, phoneNumber: false })
-                          }}
-                          disabled={loading}
-                        />
-                        <label htmlFor="corporate" className="auth-radio-label">
-                          <svg className="auth-radio-icon" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" />
-                          </svg>
-                          법인사업자
-                        </label>
-                      </div>
 
                       <div className="auth-radio-option">
                         <input
@@ -802,44 +742,6 @@ function Auth({ onLoginSuccess }) {
                         )}
                       </div>
 
-                      {registerForm.userType === 'CORPORATE' && (
-                        <div className="auth-form-group">
-                          <label className="auth-form-label">법인등록번호</label>
-                          <div className="auth-address-group">
-                            <div className="auth-address-input-wrapper">
-                              <input
-                                type="text"
-                                className="auth-input"
-                                placeholder="000000-0000000"
-                                value={registerForm.corporateNumber}
-                                onChange={(e) => {
-                                  const formatted = formatCorporateNumber(e.target.value)
-                                  setRegisterForm({ ...registerForm, corporateNumber: formatted })
-                                  setVerificationStatus(prev => ({ ...prev, corporateNumber: false }))
-                                }}
-                                required
-                                disabled={loading || verificationStatus.corporateNumber}
-                              />
-                            </div>
-                            <button
-                              type="button"
-                              className={`auth-verify-button ${verificationStatus.corporateNumber ? 'auth-verify-button-success' : ''}`}
-                              onClick={handleVerifyCorporateNumber}
-                              disabled={loading || !registerForm.corporateNumber || verificationStatus.corporateNumber}
-                            >
-                              {verificationStatus.corporateNumber ? '확인완료' : '등록확인'}
-                            </button>
-                          </div>
-                          {verificationStatus.corporateNumber && (
-                            <div className="auth-success-badge">
-                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                              </svg>
-                              법인등록번호가 확인되었습니다
-                            </div>
-                          )}
-                        </div>
-                      )}
                     </div>
                   )}
                 </div>

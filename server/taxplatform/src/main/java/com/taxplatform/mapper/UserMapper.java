@@ -69,6 +69,13 @@ public interface UserMapper {
      * @return 수임 동의 신청 회원 리스트
      */
     java.util.List<User> findAllMandateRequests();
+
+    /**
+     * 사용자 프로필 정보 업데이트
+     * @param user 업데이트할 사용자 정보 (userId, name, email, phoneNumber, postalCode, address, addressDetail)
+     * @return 업데이트된 행의 수
+     */
+    int updateProfile(User user);
 }
 
 
